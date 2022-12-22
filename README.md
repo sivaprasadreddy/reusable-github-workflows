@@ -1,2 +1,1 @@
-# reusable-github-workflows
-Reusable GitHub Workflows
+# Reusable GitHub Workflows

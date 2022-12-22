@@ -1,0 +1,41 @@
+name: Build and Test workflow for Java Gradle applications
+
+on:
+  workflow_call:
+    inputs:
+      # working-directory is added to accommodate monorepo.  For multi repo, defaults to '.', current directory
+      working-directory:
+        required: false
+        type: string
+        default: '.'
+      # pass in java version to allow different app requiring different java versions to reuse the same workflow, default to java 17
+      java-version:
+        required: false
+        type: string
+        default: '17'
+      # allowing calling workflows to pass in gradle parameter(s) such as '-Penv=staging', default to blank
+      gradle-params:
+        required: false
+        type: string
+        default: ''
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java ${{ inputs.java-version }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Build with Gradle
+        run: ./gradlew build ${{ inputs.gradle-params }}
+
